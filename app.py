@@ -46,7 +46,7 @@ if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
 
         if df.empty or len(df.columns) == 0:
-            st.error("⚠️ The uploaded file is empty or has no columns. Please upload a valid CSV.")
+            st.error("The uploaded file is empty or has no columns. Please upload a valid CSV.")
             st.stop()
 
     except Exception as e:
@@ -74,7 +74,7 @@ if uploaded_file is not None:
         st.error(f"🚫 The uploaded file has {num_rows} rows, exceeding the {MAX_ROWS}-row limit.")
         st.stop()
     if num_cols > MAX_COLUMNS:
-        st.error(f"⚠️ The uploaded file has {num_cols} columns, exceeding the {MAX_COLUMNS}-column limit.")
+        st.error(f"The uploaded file has {num_cols} columns, exceeding the {MAX_COLUMNS}-column limit.")
         st.stop()
 
     # --- 🧑‍🎓 CLEAN DATA FIRST (ensures Name column exists) ---
@@ -486,7 +486,7 @@ if uploaded_file is not None:
                     mime="application/pdf"
                 )
         except Exception as e:
-            st.error(f"⚠️ PDF export failed: {e}")
+            st.error(f"PDF export failed: {e}")
     
     with col2:
         try:
@@ -504,7 +504,7 @@ if uploaded_file is not None:
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
         except Exception as e:
-            st.error(f"⚠️ Excel export failed: {e}")
+            st.error(f"Excel export failed: {e}")
 
 else:
     st.info("👈 Upload a CSV file from the sidebar to start analysis.")
