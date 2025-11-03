@@ -7,12 +7,15 @@ __pycache__/
 *.db
 
 # Virtual environment
+.vscode/
 venv/
 .env/
 
 # Streamlit & cache
 .streamlit/
 reports/
+*.log
+*.tmp
 *.xlsx
 *.pdf
 *.png
