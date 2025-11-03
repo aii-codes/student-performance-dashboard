@@ -11,33 +11,30 @@ import kaleido
 import plotly.colors as pc
 
 
-# --- Helper: Convert Plotly chart to image bytes (Chrome-free, persistent colors) ---
+# --- Helper: Convert Plotly chart to image bytes (Chrome-free + stable on Streamlit Cloud) ---
 def plotly_to_image(fig, format="png"):
     """
-    Converts Plotly figure to image bytes safely.
-    Fixes missing colors in multi-line charts by applying color sequence manually.
+    Safely converts a Plotly figure to image bytes using Kaleido 0.2.1 (no Chrome dependency).
+    Automatically applies consistent colors for multi-line charts.
+    Works both locally and on Streamlit Cloud.
     """
 
     try:
-        # Force consistent colors for multi-line trend charts
+        # Ensure color consistency for trend charts
         if any(trace.type == "scatter" and trace.mode == "lines" for trace in fig.data):
             color_seq = pc.qualitative.Plotly + pc.qualitative.Pastel1
             for i, trace in enumerate(fig.data):
                 if not getattr(trace, "line", None) or not getattr(trace.line, "color", None):
                     trace.line.color = color_seq[i % len(color_seq)]
 
-        return fig.to_image(format=format, width=1200, height=600)
+        # Chrome-free rendering (Kaleido 0.2.1 works without Chromium)
+        img_bytes = fig.to_image(format=format, width=1200, height=600, engine="kaleido")
+        return img_bytes
 
     except Exception as e:
-        print(f"Kaleido failed initially: {e}")
+        print(f"Image export failed: {e}")
+        return None
 
-        try:
-            print("💡 Attempting Chrome auto-install for Kaleido...")
-            kaleido.get_chrome_sync()
-            return fig.to_image(format=format, width=1200, height=600)
-        except Exception as e2:
-            print(f"Chrome install or export failed: {e2}")
-            return None
 
 
 # --- 1️⃣ Excel Export with Charts (Safe Image Handling) ---
