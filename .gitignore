@@ -1,8 +1,23 @@
-venv/
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+*.db
+
+# Virtual environment
+venv/
+.env/
+
+# Streamlit & cache
+.streamlit/
 reports/
 *.xlsx
 *.pdf
-.env
+*.png
+
+# OS files
 .DS_Store
+
+# Jupyter checkpoints
+.ipynb_checkpoints/

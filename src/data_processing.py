@@ -1,45 +1,43 @@
-# src/data_processing.py
-# --- Handles all data cleaning and computation logic ---
-
 import pandas as pd
 
-# --- 1️⃣ Load and clean data ---
 def clean_data(df):
-    """
-    Clean and prepare the uploaded DataFrame.
-    """
     df = df.copy()
-    df.columns = df.columns.str.strip()  # remove extra spaces in column names
-    df.dropna(how="all", inplace=True)   # drop empty rows
+    df.columns = df.columns.str.strip()
+    df.dropna(how="all", inplace=True)
+
+    first_col = df.columns[0]
+    if pd.api.types.is_numeric_dtype(df[first_col]):
+        df.insert(0, "Name", [f"Student {i+1}" for i in range(len(df))])
+    else:
+        df.rename(columns={first_col: "Name"}, inplace=True)
     return df
 
-# --- 2️⃣ Compute summary stats ---
-def compute_statistics(df, passing_score=75):
-    """
-    Compute average, top performers, and pass rate.
-    Assumes 'Name' column for student name and subjects as numeric columns.
-    """
-    df = clean_data(df)
 
-    # Get only numeric columns (subjects)
-    numeric_cols = df.select_dtypes(include=['number']).columns
+def compute_statistics(df, passing_grade=75, exclude_cols=None, top_n=10, already_cleaned=False):
+    if not already_cleaned:
+        df = clean_data(df)
+    else:
+        df = df.copy()  # Just copy to avoid modifying original
 
-    # Per-student average
+    if exclude_cols:
+        df = df.drop(columns=[c for c in exclude_cols if c in df.columns], errors="ignore")
+
+    numeric_cols = df.select_dtypes(include=["number"]).columns
     df["Average"] = df[numeric_cols].mean(axis=1)
+    df["Status"] = df["Average"].apply(lambda x: "Passed" if x >= passing_grade else "Failed")
 
-    # Overall class average
-    overall_average = df["Average"].mean()
+    # Reorder columns (Average & Status at end)
+    cols = [c for c in df.columns if c not in ["Average", "Status"]] + ["Average", "Status"]
+    df = df[cols]
 
-    # Pass rate
-    passed = df[df["Average"] >= passing_score]
-    pass_rate = len(passed) / len(df) * 100
+    overall_avg = df["Average"].mean()
+    pass_rate = (df["Average"] >= passing_grade).mean() * 100
 
-    # Top performers (top 5)
-    top_students = df.nlargest(5, "Average")[["Name", "Average"]]
+    top_students = df.nlargest(top_n, "Average")[["Name", "Average"]]
 
     return {
         "df": df,
-        "overall_average": round(overall_average, 2),
+        "overall_average": round(overall_avg, 2),
         "pass_rate": round(pass_rate, 2),
         "top_students": top_students
     }
