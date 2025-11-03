@@ -29,14 +29,14 @@ def plotly_to_image(fig, format="png"):
         return fig.to_image(format=format, width=1200, height=600)
 
     except Exception as e:
-        print(f"⚠️ Kaleido failed initially: {e}")
+        print(f"Kaleido failed initially: {e}")
 
         try:
             print("💡 Attempting Chrome auto-install for Kaleido...")
             kaleido.get_chrome_sync()
             return fig.to_image(format=format, width=1200, height=600)
         except Exception as e2:
-            print(f"⚠️ Chrome install or export failed: {e2}")
+            print(f"Chrome install or export failed: {e2}")
             return None
 
 
@@ -243,7 +243,7 @@ def export_to_pdf_with_charts(summary, _unused, charts_dict, filename="student_s
                         os.unlink(tmp.name)
                 else:
                     pdf.set_font("Arial", "", 12)
-                    pdf.cell(0, 10, "⚠️ Chart export failed", ln=True)
+                    pdf.cell(0, 10, "Chart export failed", ln=True)
 
 
     path = os.path.join("reports", filename)
