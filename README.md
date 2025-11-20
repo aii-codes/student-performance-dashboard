@@ -32,11 +32,3 @@ Designed to analyze student grades, generate visuals, export reports, and displa
 ## 🚀 Live App
 
 👉 **https://student-performance-dashboard-aii-codes.streamlit.app/**
-
----
-
-## 🧪 Run Locally
-
-```bash
-pip install -r requirements.txt
-streamlit run app/main.py
